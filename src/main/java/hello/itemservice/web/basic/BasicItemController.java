@@ -97,10 +97,21 @@ public class BasicItemController {
      * model.addAttribute(item) 자동 추가
      * 생략시 model 에 저장되는 name은 클래스명 첫 글자만 소문자로 등록 Item -> item
      */
-    @PostMapping("/add")
+//    @PostMapping("/add")
     public String addItemV4(Item item) {
         itemRepository.save(item);
         return "basic/item";
+    }
+
+    /**
+     * PRG - Post/Redirect/Get
+     * 등록 후 새로고침 시 등록이 계속 일어남
+     * 따라서 redirect를 하면 마지막에 일어난 Get방식의 호출만 새로고침을 하더라도 일어나게 됨.
+     */
+    @PostMapping("/add")
+    public String addItemV5(Item item) {
+        itemRepository.save(item);
+        return "redirect:/basic/items/" + item.getId(); // +item.getId()를 하면 URL 인코딩이 안되므로 RedirectAttributes로 해결
     }
 
     @GetMapping("/{itemId}/edit")
