@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -108,11 +109,20 @@ public class BasicItemController {
      * 등록 후 새로고침 시 등록이 계속 일어남
      * 따라서 redirect를 하면 마지막에 일어난 Get방식의 호출만 새로고침을 하더라도 일어나게 됨.
      */
-    @PostMapping("/add")
+//    @PostMapping("/add")
     public String addItemV5(Item item) {
         itemRepository.save(item);
         return "redirect:/basic/items/" + item.getId(); // +item.getId()를 하면 URL 인코딩이 안되므로 RedirectAttributes로 해결
     }
+
+    @PostMapping("/add")
+    public String addItemV6(Item item, RedirectAttributes redirectAttributes) {
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true); // 저장이 됐다는 의미
+        return "redirect:/basic/items/{itemId}"; // +item.getId()를 하면 URL 인코딩이 안되므로 RedirectAttributes로 해결
+    }
+
 
     @GetMapping("/{itemId}/edit")
     public String editForm(@PathVariable Long itemId, Model model) {
